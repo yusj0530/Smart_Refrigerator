@@ -4,9 +4,9 @@ import pymongo
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-Qt_ref_name = "ref1"
+Qt_ref_name = ""
 Qt_ref_list = ""
-Android_ref_name = "ref1"
+Android_ref_name = ""
 
 @csrf_exempt
 def Qt_get_data(request):
@@ -31,64 +31,65 @@ def list_update(ref,data):
     client = pymongo.MongoClient("mongodb://localhost:27017/")
     db = client[ref]
     print("Qt_data:", data, type(data))
-    qtdata = data['list']
-    print("qtdata['name']:",qtdata['name'], type(qtdata['name']))
-    url = 'http://192.168.1.124:7777/assets/images/' + str(qtdata['name']) + '.jpg'
-    tt = datetime.now()
-    if len(x) == 0:
-        # db에 데이터가 하나도 없을경우 qtdata를 넣어준다.
-        keys = qtdata.keys()
-        key_list = list(keys)
-        for key in key_list:
-            db.list.update(
-                {'name': qtdata['name']},
-                {'$set': {
-                    key: qtdata[key], "img": url, "ndate": tt,
-                }}, upsert=True)
-            print("new data in db:", qtdata['name'])
-
-    else:
-        # len(x) != 0: db데이터에 리스트가있다면
-        # db데이터의 list하나하나 가져온다.
-        for index in x:
-            print("db_data:", index, type(index))
-            if index['name'] == qtdata['name']:
-                # db 리스트의 이름과 qt데이터의 이름이 같다면
-                # ["name"]은 banana로 나온다 str
-                keys = qtdata.keys()
-                key_list = list(keys)
-                print("qtdata_amount:", qtdata['amount'])
-                if qtdata['amount'] == 0:
-                    # qt데이터의 값이 0이라면
-                    db.list.delete_one({'name': qtdata['name']})
-                    print("delete_qtdata:", qtdata)
-
-                else:
-                    # qtdata['amount'] != 0: qt데이터의 값이 0이 아닐 때
-                    for key in key_list:
-                        db.list.update(
-                            {'name': qtdata['name']},
-                            {'$set': {
-                                key: qtdata[key],"img":url
-                            }}, upsert=True)
-                        print("update qtdata:",qtdata['name'])
-                break
-            else:
-                print("db_data != qt_data", index['name'])
-
-        else:
-            # for~else문 for문이 break없이 쭉 실행되고 else문이 실행된다.
-            # index['name'] != qtdata['name']: db에 qtdata가 없을때
+    qt_data = data['list']
+    print("qt_data:",qt_data, type(qt_data))
+    for qtdata in qt_data:
+        url = 'http://192.168.1.124:7777/assets/images/' + str(qtdata['name']) + '.jpg'
+        tt = datetime.now()
+        if len(x) == 0:
+            # db에 데이터가 하나도 없을경우 qtdata를 넣어준다.
             keys = qtdata.keys()
             key_list = list(keys)
-            print("qt_key_list:", key_list)
             for key in key_list:
                 db.list.update(
                     {'name': qtdata['name']},
                     {'$set': {
-                        key: qtdata[key], "img":url, "ndate": tt
+                        key: qtdata[key], "img": url, "ndate": tt,
                     }}, upsert=True)
-                print("input new data: ", qtdata['name'])
+                print("new data in db:", qtdata['name'])
+
+        else:
+            # len(x) != 0: db데이터에 리스트가있다면
+            # db데이터의 list하나하나 가져온다.
+            for index in x:
+                print("db_data:", index, type(index))
+                if index['name'] == qtdata['name']:
+                    # db 리스트의 이름과 qt데이터의 이름이 같다면
+                    # ["name"]은 banana로 나온다 str
+                    keys = qtdata.keys()
+                    key_list = list(keys)
+                    print("qtdata_amount:", qtdata['amount'])
+                    if qtdata['amount'] == 0:
+                        # qt데이터의 값이 0이라면
+                        db.list.delete_one({'name': qtdata['name']})
+                        print("delete_qtdata:", qtdata)
+
+                    else:
+                        # qtdata['amount'] != 0: qt데이터의 값이 0이 아닐 때
+                        for key in key_list:
+                            db.list.update(
+                                {'name': qtdata['name']},
+                                {'$set': {
+                                    key: qtdata[key],"img":url
+                                }}, upsert=True)
+                            print("update qtdata:",qtdata['name'])
+                    break
+                else:
+                    print("db_data != qt_data", index['name'])
+
+            else:
+                # for~else문 for문이 break없이 쭉 실행되고 else문이 실행된다.
+                # index['name'] != qtdata['name']: db에 qtdata가 없을때
+                keys = qtdata.keys()
+                key_list = list(keys)
+                print("qt_key_list:", key_list)
+                for key in key_list:
+                    db.list.update(
+                        {'name': qtdata['name']},
+                        {'$set': {
+                            key: qtdata[key], "img":url, "ndate": tt
+                        }}, upsert=True)
+                    print("input new data: ", qtdata['name'])
 
 @csrf_exempt
 def temperature(data):

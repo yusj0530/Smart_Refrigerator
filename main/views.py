@@ -6,6 +6,8 @@ from main.models import myfind
 @csrf_exempt
 def Qt_getData(request):
     Qt_data = models.Qt_get_data(request)
+    # Qt_data = {"list":[{"name":"맥주","amount":0,"img":"http://192.168.1.124:7777/assets/images/"+'맥주'+".jpg", "edate":"2019-02-03"},
+    #                    {"name":'양파',"amount":0, "img":"http://192.168.1.124:7777/assets/images/"+'양파'+".jpg", "ldate":3}]}
     # qt_data가져옴
     print("Qt_data:", Qt_data, type(Qt_data))
     key = Qt_data.keys()
@@ -134,7 +136,7 @@ def Android_reflist(request):
                 Not_correct = {"LoginFail": "ID or password"}
                 return JsonResponse(Not_correct)
 
-@csrf_exempt
+@csrf_exempt 
 def Android_getData(request):
     name = models.Android_get_name(request)
     print("Android_ref_name:", name, "Response O.K")
