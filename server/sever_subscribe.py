@@ -7,7 +7,7 @@ from mongo.DB import mymongo
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code " + str(rc))
-    client.subscribe([("tem", 0), ("img", 0)])  # (Topic,QoS)-[("201,0),("101",0)]을 구독한다.
+    client.subscribe([("tem", 0), ("img", 0)])  # (Topic,QoS)-[("tem",0 ),("img",0 )]을 구독한다.
 
 
 def on_message(client, userdata, msg):
@@ -24,61 +24,28 @@ def on_message(client, userdata, msg):
             for ref_name in a:
 
                 if ref_name['ref_name']=="ref9":
-                    print("ref:",ref_name)
                     print("ref_name:",ref_name['ref_name'])
                     collection = mymongo(ref_name['ref_name'], "temperature")
                     collection.save({"_id": 1, "tem": pay})
                 if ref_name['ref_name']=="ref10":
-                    print("ref:", ref_name)
                     print("ref_name:", ref_name['ref_name'])
                     collection = mymongo(ref_name['ref_name'], "temperature")
                     collection.save({"_id":1,"tem":-9})
                 if ref_name['ref_name']=="ref7":
-                    print("ref:", ref_name)
                     print("ref_name:", ref_name['ref_name'])
                     collection = mymongo(ref_name['ref_name'], "temperature")
                     collection.save({"_id":1,"tem":10})
                 if ref_name['ref_name']== "ref8":
-                    print("ref:", ref_name)
                     print("ref_name:", ref_name['ref_name'])
                     collection = mymongo(ref_name['ref_name'], "temperature")
                     collection.save({"_id": 1, "tem": 40})
-     #
-     # f = myfind("refrigerator", "list")
-     #    print("reDB:", f, type(f))
-     #    for index in f:
-     #        print("index:", index)
-     #        a=index['serial']
-     #        print(a, type(a))
-     #        serial = index['serial'].keys()
-     #        serial_list = list(serial)
-     #        print(serial_list)
-     #        for i in a:
-     #            print(i)
-     #            print(i['ref_name'])
 
-    # for index in f:
-    #     print("index:", index)
-    #     print(index['serial'], type(index['serial']))
-    #     serial = index['serial'].keys()
-    #     serial_list = list(serial)
-    #     print(serial_list)
-    #     for i in serial_list:
-    #         if i == "ref5":
-
-    if str(msg.topic)=="img":
+    elif str(msg.topic)=="img":
 
         f = myfind("refrigerator", "list")
-        print("reDB:", f, type(f))
         for index in f:
-            print("index:", index)
             a = index['serial']
-            print(a, type(a))
-            # serial = index['serial'].keys()
-            # serial_list = list(serial)
-            # print(serial_list)
             for i in a:
-                print("i:",i)
                 print("r[re]:",i['ref_name'])
                 if i['ref_name']=='ref9':
                     collection = mymongo(i['ref_name'], "picture")
@@ -126,7 +93,6 @@ def on_message(client, userdata, msg):
 
 client = mqtt.Client()
 client.connect("192.168.1.124")
-
 
 client.on_connect = on_connect
 client.on_message = on_message

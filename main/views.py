@@ -1,8 +1,8 @@
 from django.http import JsonResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from main import models
-from main.models import myfind, crawling_recipelist, crawling_ingredient
-from mongo import update
+from mongo import DB
+
 
 @csrf_exempt
 def Qt_getData(request):
@@ -15,13 +15,13 @@ def Qt_getData(request):
 
     if key_list[0] == "ID":
         # 받아온 qt데이터의 첫번째 키값이 ID일 때
-        x = myfind('member', 'list')
+        x = DB.myfind('member', 'list')
         print("member_list:", x, type(x))
         for i in x:
             if i['ID'] == Qt_data['ID'] and i['password'] == Qt_data['Passwd']:
                 # 아이디와 비밀번호가 맞다면
                 print("correct")
-                ref_li = myfind("refrigerator", 'list')
+                ref_li = DB.myfind("refrigerator", 'list')
                 for i in ref_li:
                     # 냉장고 리스트를 하나씩 가져온다.
                     if i['ID'] == Qt_data['ID']:
@@ -39,7 +39,7 @@ def Qt_getData(request):
     if key_list[0] == "list":
         refname = models.Qt_ref_name
         print("Qt_ref_name:",refname)
-        update.list_update(refname, Qt_data)
+        models.list_update(refname, Qt_data)
         return HttpResponseRedirect('Qt_list')
 
 
@@ -78,7 +78,7 @@ def Qt_tem(request):
 @csrf_exempt
 def Qt_img(request):
     print("Qt_ref_name:", models.Qt_ref_name)
-    url = 'http://192.168.1.124:7777/assets/images/'+models.Qt_ref_name+'.jpg'
+    url = 'http://192.168.1.124:7777/assets/images/food/'+models.Qt_ref_name+'.jpg'
     pic_results = {"img": url}
     print("Qt_picture:", pic_results, type(pic_results))
     return JsonResponse(pic_results)
@@ -93,7 +93,7 @@ def Qt_list(request):
 
 @csrf_exempt
 def Qt_ldate(request):
-    x = myfind(models.Qt_ref_name,"list")
+    x = DB.myfind(models.Qt_ref_name,"list")
     str_li = models.ldate_list(x)
     print(str_li, type(str_li))
     li =[]
@@ -107,18 +107,6 @@ def Qt_ldate(request):
     return JsonResponse(d)
 
 @csrf_exempt
-def Qt_recipe(request):
-    recipelist = crawling_recipelist(request)
-    print(recipelist,type(recipelist))
-    return JsonResponse(recipelist)
-
-@csrf_exempt
-def Qt_ingredient(request):
-    material = crawling_ingredient(request)
-    print(material,type(material))
-    return JsonResponse(material)
-
-@csrf_exempt
 def Android_reflist(request):
     And_data = models.Android_get_data(request)
     name = And_data.split('&')
@@ -127,12 +115,12 @@ def Android_reflist(request):
     null = name[2]
     print("ID:", id, "password:", passwd, null)
     if name[0][:2] == "ID":
-        x = myfind('member', 'list')
+        x = DB.myfind('member', 'list')
         print("member_list:", x, type(x))
         for i in x:
             if i['ID'] == id and i['password'] == passwd:
                 print("correct")
-                ref_li = myfind("refrigerator", 'list')
+                ref_li = DB.myfind("refrigerator", 'list')
                 for i in ref_li:
                     if i['ID'] == id:
                         Android_reflist = {'reflist': i['serial']}
@@ -167,7 +155,7 @@ def Android_tem(request):
 
 @csrf_exempt
 def Android_img(request):
-    url = 'http://192.168.1.124:7777/assets/images/'+models.Android_ref_name+'.jpg'
+    url = 'http://192.168.1.124:7777/assets/images/food/'+models.Android_ref_name+'.jpg'
     pic_results = {"img": url}
     print("Android_picture:", pic_results, type(pic_results))
     return JsonResponse(pic_results)
@@ -179,7 +167,7 @@ def Android_list(request):
     return JsonResponse(dict_li)
 
 def Android_edate(request):
-    x = myfind(models.Android_ref_name, "list")
+    x = DB.myfind(models.Android_ref_name, "list")
     str_li = models.edate_list(x)
     if str_li == []:
         print("None object")
@@ -198,8 +186,7 @@ def Android_edate(request):
 
 @csrf_exempt
 def Android_ldate(request):
-    # x = myfind("ref4","list")
-    x = myfind(models.Android_ref_name,"list")
+    x = DB.myfind(models.Android_ref_name,"list")
     str_li = models.ldate_list(x)
     if str_li == []:
         print("None object")
