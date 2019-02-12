@@ -1,3 +1,12 @@
+import socket
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect(("192.168.0.77", 8888))
+data = (28, 30)
+fdata = "DHT:{0}:{1}".format(data[0], data[1])
+s.send(fdata.encode())
+s.close()
+
 f = open("D:\\test\새파일.txt", 'r')
 
 def newfile():
@@ -30,5 +39,3 @@ def readlines():
         name = line[1]
         print(name, type(name))
 
-
-readlines()

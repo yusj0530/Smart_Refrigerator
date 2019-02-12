@@ -1,14 +1,12 @@
 from django.http import JsonResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from main import models
-from main.models import myfind
+from main.models import myfind, crawling_recipelist, crawling_ingredient
+from mongo import update
 
 @csrf_exempt
 def Qt_getData(request):
     Qt_data = models.Qt_get_data(request)
-    # Qt_data = {"list":[{"name":"맥주","amount":0,"img":"http://192.168.1.124:7777/assets/images/"+'맥주'+".jpg", "edate":"2019-02-03"},
-    #                    {"name":'양파',"amount":0, "img":"http://192.168.1.124:7777/assets/images/"+'양파'+".jpg", "ldate":3}]}
-    # qt_data가져옴
     print("Qt_data:", Qt_data, type(Qt_data))
     key = Qt_data.keys()
     key_list = list(key)
@@ -41,12 +39,11 @@ def Qt_getData(request):
     if key_list[0] == "list":
         refname = models.Qt_ref_name
         print("Qt_ref_name:",refname)
-        up = models.list_update(refname, Qt_data)
-        print("update:", up, type(up))
+        update.list_update(refname, Qt_data)
         return HttpResponseRedirect('Qt_list')
-    # 로그인이 성공했을때 냉장고 리트스 보여주는 함수
 
 
+# 로그인이 성공했을때 냉장고 리트스 보여주는 함수
 @csrf_exempt
 def Qt_reflist(request):
     print("Qt_reflist:", Qt_ref_list, type(Qt_ref_list))
@@ -108,6 +105,18 @@ def Qt_ldate(request):
     d = {"list":li}
     print(d,type(d))
     return JsonResponse(d)
+
+@csrf_exempt
+def Qt_recipe(request):
+    recipelist = crawling_recipelist(request)
+    print(recipelist,type(recipelist))
+    return JsonResponse(recipelist)
+
+@csrf_exempt
+def Qt_ingredient(request):
+    material = crawling_ingredient(request)
+    print(material,type(material))
+    return JsonResponse(material)
 
 @csrf_exempt
 def Android_reflist(request):

@@ -44,17 +44,32 @@ def mymongo(mydb,mycollection):
     collection = db[mycollection]
     return collection
 
-def insert():
-    name = "케첩"
-    url = 'http://192.168.1.124:7777/assets/images/'+name+'.jpg'
-    tt = datetime.now()
-    x = mymongo("ref4","list")
-    x.update_one({"name":name},
-                 {"$set":{"amount":2,"img":url,"edate":"2021-08-29","ndate":tt}}, upsert=True)
-    # x.update_one({"name":name},
-    #              {"$set":{"amount":8,"img":url,"ndate":tt}}, upsert=True)
-    print(x)
-insert()
+# def insert():
+#     name = "우유"
+#     url = 'http://192.168.1.124:7777/assets/images/'+name+'.jpg'
+#     tt = datetime.now()
+#     x = mymongo("ref3","list")
+#     x.update_one({"name":name},
+#                  {"$set":{"amount":1,"img":url,"edate":"2021-02-25","ndate":tt}}, upsert=True)
+#     # x.update_one({"name":name},
+#     #              {"$set":{"amount":3,"img":url,"ndate":tt}}, upsert=True)
+#     print(x)
+# # insert()
+
+def update(data,db,url,tt):
+    keys = data.keys()
+    key_list = list(keys)
+    for key in key_list:
+        db.list.update(
+            {'name': data['name']},
+            {'$set': {
+                key: data[key], "img": url, "ndate": tt,
+            }}, upsert=True)
+        print("새로운 물품 업데이트")
+
+def insert(db,data,url,tt):
+    db.list.insert({"name": data['name'], "amount": data['amount'],
+                    "img": url, "edate": data["edate"], "ndate": tt}, True)
 
 def test():
 
@@ -63,10 +78,10 @@ def test():
     print(time1)  # 2018-07-13 21:40:05
     print(time2)  # 2018-07-23 20:58:59.666626
 
-    print(time2 - time1)  # 9 days, 23:18:54.666626
-    print(type(time2 - time1))  # <class 'datetime.timedelta'>
+    # print(time2 - time1)  # 9 days, 23:18:54.666626
+    # print(type(time2 - time1))  # <class 'datetime.timedelta'>
 
-
+test()
 
 def lday(refname):
     time2 = datetime.now()

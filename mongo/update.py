@@ -2,13 +2,15 @@ import json
 import pymongo
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+
+from mongo import DB
 from mongo.racipe import crawling
 from bs4 import BeautifulSoup
 from datetime import datetime
 
 RESULT_DIRECTORY = "__result"
 
-Qt_ref_name = "ref3"
+Qt_ref_name = "ref1"
 Qt_ref_list = ""
 Android_ref_name = ""
 
@@ -17,7 +19,7 @@ def Qt_get_data(request):
     # getdata = request.body
     # st_data = getdata.decode()
     # Qt_data = eval(st_data)
-    Qt_data = {"list":[{"name":"파프리카","amount":2,'ndate':'2022-02-22'}]}
+    Qt_data = {"list":[{"name":"우유","amount":0,'edate':'2020-05-25'}]}
     return Qt_data
 
 @csrf_exempt
@@ -35,71 +37,64 @@ def list_update(ref,data):
     x = myfind(ref, "list")
     client = pymongo.MongoClient("mongodb://localhost:27017/")
     db = client[ref]
-    print("Qt_data:", data, type(data))
     qt_data = data['list']
     print("qt_data:",qt_data, type(qt_data))
     for qtdata in qt_data:
         url = 'http://192.168.1.124:7777/assets/images/' + str(qtdata['name']) + '.jpg'
         tt = datetime.now()
         if len(x) == 0:
-            # db에 데이터가 하나도 없을경우 qtdata를 넣어준다.
-            keys = qtdata.keys()
-            key_list = list(keys)
-            for key in key_list:
-                db.list.update(
-                    {'name': qtdata['name']},
-                    {'$set': {
-                        key: qtdata[key], "img": url, "ndate": tt,
-                    }}, upsert=True)
-                print("new data in db:", qtdata['name'])
-
+            print('db 데이터가 하나도 없을 경우')
+            DB.update(qtdata,db,url,tt)
         else:
-            # len(x) != 0: db데이터에 리스트가있다면
-            # db데이터의 list하나하나 가져온다.
+            print('len(x)!=0')
+            aa=[]
             for index in x:
-                print("db_data:", index, type(index))
-                if index['name'] == qtdata['name']:
-                    # db 리스트의 이름과 qt데이터의 이름이 같다면
-                    # ["name"]은 banana로 나온다 str
-                    keys = qtdata.keys()
-                    key_list = list(keys)
-                    print("qtdata_amount:", qtdata['amount'])
-                    if qtdata['amount'] == 0:
-                        # qt데이터의 값이 0이라면
-                        db.list.delete_one({'name': qtdata['name']})
-                        print("delete_qtdata:", qtdata)
-
-                    elif qtdata['amount'] != 0 and qtdata['edate'] != index['edate']:
-                        print( "Eeeeeeee")
-                        db.list.insert({"name": qtdata['name'],"amount": qtdata['amount'],
-                                        "img": url, "edate": qtdata["edate"],"ndate": tt}, True)
-
-                   # qtdata['amount'] != 0: qt데이터의 값이 0이 아닐 때
-                    else:
-                        for key in key_list:
-                            db.list.update(
-                                {'name': qtdata['name']},
-                                {'$set': {
-                                    key: qtdata[key],"img":url
-                                }}, upsert=True)
-                            print("update qtdata:",qtdata['name'])
-                    break
-                else:
-                    print("db_data != qt_data", index['name'])
+                aa = index['name']
+            if qtdata['name'] not in aa:
+                print('물품이 db데이터에 없을 경우')
+                print(aa,type(aa))
+                DB.update(qtdata, db, url, tt)
+                break
 
             else:
-                # for~else문 for문이 break없이 쭉 실행되고 else문이 실행된다.
-                # index['name'] != qtdata['name']: db에 qtdata가 없을때
-                keys = qtdata.keys()
-                key_list = list(keys)
-                print("qt_key_list:", key_list)
-                for key in key_list:
-                    db.list.update(
-                        {'name': qtdata['name']},
-                        {'$set': {
-                            key: qtdata[key], "img":url, "ndate": tt
-                        }}, upsert=True)
-                    print("input new data: ", qtdata['name'])
+                for index in x:
+                    print('물품이 db데이터에 있을 경우')
+                    print("db_data:", index, type(index))
+                    if index['name'] == qtdata['name']:
+                        print('이름이 같다면')
+                        if 'edate' in index:
+                            print('유통기한이 있다면')
+                            if qtdata['edate'] == index['edate']:
+                                print('유통기한이 같다면')
+                                print("수량은: ", qtdata['amount'])
+                                if int(qtdata['amount']) == 0:
+                                    print('수량이 0이라면')
+                                    db.list.delete_one({'name': qtdata['name']})
+                                    print('데이터 삭제')
+                                else:
+                                    print('수량이 0이 아니라면')
+                                    DB.update(qtdata,db,url,tt)
+                                    print('qt데이터 업데이트')
+                            else:
+                                print('유통기한이 다르다면')
+                                DB.insert(qtdata, db, url, tt)
+                                print('qt데이터 insert')
+                        else:
+                            print('edate가 없다면 (경과일 물품)')
+                            if qtdata['ndate'] == index['ndate']:
+                                print('넣은 시간이 같다면')
+                                print(qtdata['amount'])
+                                if qtdata['amount']== index['amount']:
+                                    print('수량이 0이라면')
+                                    db.list.delete_one({'name': qtdata['name']})
+                                else:
+                                    print('수량이 0이 아니라면')
+                                    DB.update(qtdata, db, url, qtdata['ndate'])
+                                    print('새로운 물품 업데이트')
+                            else:
+                                print('넣은 시간이 다르다면')
+                                DB.insert(qtdata,db,url,qtdata['ndate'])
+                                print('새로운 물품 업데이트')
 
 @csrf_exempt
 def crawling_recipelist(request):

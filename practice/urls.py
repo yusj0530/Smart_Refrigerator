@@ -31,6 +31,8 @@ urlpatterns = [
     path('refrigerator/Qt_img', main_views.Qt_img),
     path('refrigerator/Qt_list', main_views.Qt_list),
     path('refrigerator/Qt_ldate', main_views.Qt_ldate),
+    path('refrigerator/Qt_recipe', main_views.Qt_recipe),
+    path('refrigerator/Qt_ingredient', main_views.Qt_ingredient),
 
     path('refrigerator/Android_reflist', main_views.Android_reflist),
     path('refrigerator/Android_getData', main_views.Android_getData),
@@ -39,5 +41,6 @@ urlpatterns = [
     path('refrigerator/Android_list', main_views.Android_list),
     path('refrigerator/Android_ldate', main_views.Android_ldate),
     path('refrigerator/Android_edate', main_views.Android_edate),
+    # path('refrigerator/Android_recipe', main_views.Android_recipe),
 
 ]
