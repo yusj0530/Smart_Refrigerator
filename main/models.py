@@ -46,57 +46,57 @@ def list_update(ref,data):
     qt_key = list(qkey)
 
     if len(x) == 0:
-        print('db 데이터가 하나도 없을 경우')
+        print('len(x)==0')
         if 'edate' in qtdata:
-            print('유통기한 물품 업데이트')
+            print('edate product update')
             DB.update(qtdata, db, url, tt)
         else:
-            print('경과일물품 업데이트')
+            print('ldate product update')
             DB.n_update(qtdata, db, url)
     else:
         print('len(x)!=0')
         for index in x:
             if qtdata['name']==index['name']:
-                print('이름이 같다면')
+                print('qt[name]==db[name]')
                 if 'edate' in qt_key:
-                    print('유통기한물품')
+                    print('edate product')
                     if qtdata['amount'] == 0:
-                        print('수량이 0인 유통기한물품')
-                        print('delete')
+                        print('amount==0 and edate product')
                         db.list.delete_one({'name': qtdata['name'], 'edate': qtdata['edate']})
+                        print('delete edate product')
                         break
                     else:
-                        print('수량이 0이아닌 유통기한물품')
+                        print('amount!=0 and edate product')
                         if qtdata['edate'] == index['edate']:
-                                print('update')
+                                print('edate productupdate ')
                                 DB.update(qtdata,db,url,tt)
                                 break
                         else:
-                            print('이름이 같지만 유통기한이 다르다.')
+                            print('qt[name]==db[name] and qt[edate]!=db[edate]')
                 else:
-                    print('경과일')
+                    print('ldate product')
                     if qtdata['amount'] == 0:
-                        print('수량이0인 경과일물품')
+                        print('amount==0 ldate product')
                         db.list.delete_one({'name': qtdata['name'],'ndate':qtdata['ndate']})
                         break
                     else:
-                        print('수량이 0이 아닌 경과일 물품')
+                        print('amount!=0 ldate product')
                         if qtdata['ndate']==index['ndate']:
-                            print('넣은 시간이 같다.')
-                            print('update')
+                            print('qt[ndate]==db[ndate]')
+                            print('update ldate product')
                             DB.n_update(qtdata,db,url)
                             break
                         else:
-                            print('이름이 같지만 넣은 시간이 다르다.')
+                            print('qt[name]==db[name] and qt[ndate]!=db[ndate]')
             else:
-                print('이름이 같지 않다')
+                print('qt[name]!=db[name]')
         else:
             print('for else문 ')
             if 'edate' in qtdata:
-                print('유통기한 물품 업데이트')
+                print('edate product update')
                 DB.update(qtdata,db,url,tt)
             else:
-                print('경과일물품 업데이트')
+                print('ldate product update')
                 DB.n_update(qtdata,db,url)
 
 @csrf_exempt
