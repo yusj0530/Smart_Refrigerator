@@ -156,7 +156,7 @@ def Android_Get_list(refname):
     for li in get_li:
         del li['_id']
         del li['ndate']
-        if 'edate' in li:
+        if 'edate' and 'ldate' in li:
             del li['ldate']
             print("delete ldate")
             print(li)
