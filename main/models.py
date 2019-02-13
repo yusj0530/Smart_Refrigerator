@@ -138,7 +138,6 @@ def Qt_Get_list(refname):
             del li['ldate']
             print("delete ldate")
     dict_li = {'list': get_li}
-    print("inventory_list:", dict_li['name'], type(dict_li))
     return json.dumps(dict_li)
 
 @csrf_exempt
@@ -160,7 +159,6 @@ def Android_Get_list(refname):
             dict_li = {'list': get_li}
             return dict_li
     dict_li = {'list': get_li}
-    print("inventory_list:", dict_li['name'], type(dict_li))
     return json.dumps(dict_li)
 
 def edate_list(data):
