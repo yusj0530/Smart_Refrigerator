@@ -179,7 +179,6 @@ def Android_edate(request):
             del dict_li['_id']
             del dict_li['ndate']
             li.append(dict_li)
-        print(li,type(li))
         d = {"list":li}
         print(d,type(d))
         return JsonResponse(d)
@@ -198,7 +197,6 @@ def Android_ldate(request):
             del dict_li['_id']
             del dict_li['ndate']
             li.append(dict_li)
-        print(li,type(li))
         d = {"list":li}
         print(d,type(d))
         return JsonResponse(d)

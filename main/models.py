@@ -113,8 +113,6 @@ def lday(refname):
     f = DB.myfind(refname, "list")
     if "edate" not in f:
         for i in f:
-            print('i:',i,type(i))
-            print('f:',f,type(f))
             day = i['ndate']
             yd = day.year
             my = day.month
@@ -125,9 +123,8 @@ def lday(refname):
             time1 = datetime(yd, my, dd, td, mmd, sd)
             tt = time2-time1
             print(i['name'], "time1:", time1)
-            print(i['name'], "tt:", tt)
             print(i['name'], "day:", tt.days)
-            db.list.update({"name":i['name']},
+            db.list.update({"name":i['name'],'ndate':i['ndate']},
                 {'$set':{"ldate":tt.days}},upsert=True)
 
 @csrf_exempt
@@ -141,7 +138,7 @@ def Qt_Get_list(refname):
             del li['ldate']
             print("delete ldate")
     dict_li = {'list': get_li}
-    print("inventory_list:", dict_li, type(dict_li))
+    print("inventory_list:", dict_li['name'], type(dict_li))
     return json.dumps(dict_li)
 
 @csrf_exempt
@@ -163,7 +160,7 @@ def Android_Get_list(refname):
             dict_li = {'list': get_li}
             return dict_li
     dict_li = {'list': get_li}
-    print("inventory_list:", dict_li, type(dict_li))
+    print("inventory_list:", dict_li['name'], type(dict_li))
     return json.dumps(dict_li)
 
 def edate_list(data):
@@ -171,7 +168,6 @@ def edate_list(data):
     for edate_li in data:
         if 'edate' in edate_li:
             l.append(edate_li)
-        print("l", l, type(l))
     return l
 
 
@@ -180,7 +176,6 @@ def ldate_list(data):
     for ldate_li in data:
         if 'edate' not in ldate_li:
             l.append(ldate_li)
-        print("l", l, type(l))
     return l
 
 @csrf_exempt
