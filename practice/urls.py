@@ -17,12 +17,9 @@ from django.contrib import admin
 from django.urls import path
 
 import main.views as main_views
-import web.views as web_views
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-
-    path('main', web_views.main),
-    path('main/thermometer', web_views.temperature),
 
     path('refrigerator/Qt_reflist', main_views.Qt_reflist),
     path('refrigerator/Qt_getData', main_views.Qt_getData),
@@ -31,8 +28,6 @@ urlpatterns = [
     path('refrigerator/Qt_img', main_views.Qt_img),
     path('refrigerator/Qt_list', main_views.Qt_list),
     path('refrigerator/Qt_ldate', main_views.Qt_ldate),
-    path('refrigerator/Qt_recipe', main_views.Qt_recipe),
-    path('refrigerator/Qt_ingredient', main_views.Qt_ingredient),
 
     path('refrigerator/Android_reflist', main_views.Android_reflist),
     path('refrigerator/Android_getData', main_views.Android_getData),
@@ -41,6 +36,5 @@ urlpatterns = [
     path('refrigerator/Android_list', main_views.Android_list),
     path('refrigerator/Android_ldate', main_views.Android_ldate),
     path('refrigerator/Android_edate', main_views.Android_edate),
-    # path('refrigerator/Android_recipe', main_views.Android_recipe),
 
 ]

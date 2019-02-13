@@ -1,8 +1,6 @@
+from datetime import datetime
 
-from datetime import date
 import pymongo
-from main.models import myfind
-from datetime import datetime, timedelta
 
 def member_list():
     mem_list = mymongo('member', 'list')
@@ -54,12 +52,55 @@ def update(data,db,url,tt):
     key_list = list(keys)
     for key in key_list:
         db.list.update(
-            {'name': data['name']},
+            {'name': data['name'],'edate':data['edate']},
             {'$set': {
                 key: data[key], "img": url, "ndate": tt,
             }}, upsert=True)
         print("새로운 물품 업데이트")
 
-def insert(db,data,url,tt):
-    db.list.insert({"name": data['name'], "amount": data['amount'],
-                    "img": url, "edate": data["edate"], "ndate": tt}, True)
+def n_update(data,db,url):
+    keys = data.keys()
+    key_list = list(keys)
+    for key in key_list:
+        db.list.update(
+            {'name': data['name'], 'ndate': data['ndate']},
+            {'$set': {
+                key: data[key], "img": url
+            }}, upsert=True)
+        print("새로운 물품 업데이트")
+
+def einsert(db,data,url,tt):
+    db.list.insert({"name": data['name'], "amount": data['amount'], "img": url, "edate": data["edate"], "ndate": tt}, True)
+
+def linsert(db,data,url,tt):
+    db.list.insert({"name": data['name'], "amount": data['amount'], "img": url, "ndate": tt}, True)
+
+def qttime(data):
+    qtime = data['ndate']
+    # qtime = '2012-02-22-12-28-00'
+    print("Qqqq",qtime,type(qtime))
+    a = qtime.split('-')
+    print(a,type(a))
+    yd = int(a[0])
+    my = int(a[1])
+    dd = int(a[2])
+    td = int(a[3])
+    mmd = int(a[4])
+    sd = int(a[5])
+    qt_ndate = datetime(yd, my, dd, td, mmd, sd)
+    print(qt_ndate,type(qt_ndate))
+    return qt_ndate
+
+# def qt_time(data):
+#     qtime = data['ndate']
+#     # qtime = '2012-02-22-12-28-00'
+#     print("qttime.year",qtime,type(qtime))
+#     yd = qtime.year
+#     my = qtime.month
+#     dd = qtime.day
+#     td = qtime.hour
+#     mmd = qtime.minute
+#     sd = qtime.second
+#     qt_ndate = datetime(yd, my, dd, td, mmd, sd)
+#     print(qt_ndate,type(qt_ndate))
+#     return qt_ndate
