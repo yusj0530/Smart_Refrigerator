@@ -7,16 +7,16 @@ from mongo import DB
 
 RESULT_DIRECTORY = "__result"
 
-Qt_ref_name = "ref6"
+Qt_ref_name = ""
 Qt_ref_list = ""
 Android_ref_name = ""
 t = datetime.now()
 @csrf_exempt
 def Qt_get_data(request):
-    # getdata = request.body
-    # st_data = getdata.decode()
-    # Qt_data = eval(st_data)
-    Qt_data = {"list":[{"name":"양파","amount":4,'ndate':'2019-02-13-17-00-00'}]}
+    getdata = request.body
+    st_data = getdata.decode()
+    Qt_data = eval(st_data)
+    # Qt_data = {"list":[{"name":"양파","amount":4,'ndate':'2019-02-13-17-00-00'}]}
     return Qt_data
 
 @csrf_exempt
