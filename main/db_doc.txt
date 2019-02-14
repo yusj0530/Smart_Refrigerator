@@ -1,0 +1,35 @@
+main.models.py
+
+def list_update:
+    if db데이터 하나도 없을 때
+        if qt데이터에 유통기한 있을때
+            유통기한 물품 업데이트
+        else qt데이터에 유통기한 없을때
+            경과일 물품 업데이트
+    else db데이터 있을 때
+        for dbdata in db_list:
+            if 이름이 같을때
+                if qt데이터에 유통기한이 있을때
+                    if qt데이터 수량이0일때
+                        유통기한 물품 삭제
+                        break
+                    else 수량이0이 아닌 유통기한 물품
+                        if 유통기한이 같을때
+                            유통기한 물품 업데이트
+                            break
+                        else 이름이 같지만 유통기한이 같지않을때
+                else 경과일 물품일때
+                    if 수량이 0일때
+                        경과일 물품 삭제
+                        break
+                    else 수량이 0이 아닐때
+                        if 넣은 날짜가 같을때
+                            경과일 물품 업데이트
+                            break
+                        else 넣은 날짜가 같지 않을때
+            else 이름이 다를때
+        else ( for~else문)
+            if qt데이터에 유통기한이 있을때
+                 유통기한 물품 업데이트
+            else qt데이터에 유통기한이 없을때
+                경과일 물품 업데이트
