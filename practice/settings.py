@@ -122,8 +122,4 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'statics'),
 )
 STATIC_URL = '/assets/'
-# MEDIA_URL = '/media/'
-# MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 
-#session
-SESSION_EXPIRE_AT_BRAWSER_CLOSE = True
